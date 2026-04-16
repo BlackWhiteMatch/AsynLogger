@@ -1,0 +1,26 @@
+# 编译产物
+build/
+Release/
+Debug/
+*.exe
+*.dll
+*.lib
+*.obj
+*.pdb
+*.ilk
+
+# Visual Studio 工程文件
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+.vs/
+
+# VSCode 配置
+.vscode/
+*.code-workspace
+
+# 临时文件
+*.tmp
+*.log
+*.swp

@@ -1,8 +1,7 @@
-#include "AsynLogger/TimeFormat.hpp"
+#include "AsynLogger/TimeFormatter.hpp"
 
-std::string FormatNowTime(SecondPrecision Spre){
-    auto now = std::chrono::system_clock::now();
-
+std::string DefaultFromatter::format(const LogEvent& event, SecondPrecision Spre) const {
+    auto now = event.timeStamp;
 #if __cplusplus >= 202002L
     switch (Spre)
     {
@@ -32,7 +31,7 @@ std::string FormatNowTime(SecondPrecision Spre){
             std::chrono::floor<std::chrono::seconds>(now)
         );
     }
-#endif
+#else
     auto now_time_t = std::chrono::system_clock::to_time_t(now);
     auto local_time = *std::localtime(&now_time_t);
     auto sub_sec = now - std::chrono::system_clock::from_time_t(now_time_t);
@@ -64,4 +63,5 @@ std::string FormatNowTime(SecondPrecision Spre){
     std::strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", &local_time);
     if(!need_tail) return std::string(time_str);
     return std::string(time_str) + "." + std::to_string(tail);
+#endif
 }

@@ -21,7 +21,7 @@ public:
     virtual std::string format(const LogEvent& event, SecondPrecision Spre) const = 0;
 };
 
-class DefaultFromatter : public TimeFormatter{
+class DefaultTimeFormatter : public TimeFormatter{
 public:
     std::string format(const LogEvent& event, SecondPrecision Spre) const override;
 };

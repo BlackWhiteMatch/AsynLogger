@@ -211,7 +211,7 @@ int main() {
         "这是一条测试日志"
     );
     
-    DefaultFromatter formatter;
+    DefaultTimeFormatter formatter;
     std::string timeStr = formatter.format(event, SecondPrecision::MilliSeconds);
     std::cout << timeStr << std::endl;
     

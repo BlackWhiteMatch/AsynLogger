@@ -1,6 +1,6 @@
 #include "AsynLogger/TimeFormatter.hpp"
 
-std::string DefaultFromatter::format(const LogEvent& event, SecondPrecision Spre) const {
+std::string DefaultTimeFormatter::format(const LogEvent& event, SecondPrecision Spre) const {
     auto now = event.timeStamp;
 #if __cplusplus >= 202002L
     switch (Spre)

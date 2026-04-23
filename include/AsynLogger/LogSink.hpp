@@ -83,23 +83,31 @@ private:
 class SinkFactory {
 public:
     static std::unique_ptr<LogSink> CreateConsoleSink(){
+#if __cplusplus >= 201402L
         return std::make_unique<ConsoleSink>();
-    }
-#if __cplusplus >= 201703L
-    static std::unique_ptr<LogSink> CreateFileSink(std::string_view filePath){
-        return std::make_unique<FileSink>(filePath);
-    }
-#elif __cplusplus >= 201103L
-    static std::unique_ptr<LogSink> CreateFileSink(const std::string& filePath){
-        return std::make_unique<FileSink>(filePath);
-    }
+#else
+        return std::unique_ptr<LogSink>(new ConsoleSink());
 #endif
+    }
+    
+    static std::unique_ptr<LogSink> CreateFileSink(const std::string& filePath){
+#if __cplusplus >= 201402L
+        return std::make_unique<FileSink>(filePath);
+#else
+        return std::unique_ptr<LogSink>(new FileSink(filePath));
+#endif
+    }
+    
     static std::unique_ptr<LogSink> CreateRollingFileSink(
         const std::string& basePath,
         size_t maxFileSize,
         size_t maxFileNum,
         bool isOpenNewFile
     ){
+#if __cplusplus >= 201402L
         return std::make_unique<RollingFileSink>(basePath, maxFileSize, maxFileNum, isOpenNewFile);
+#else
+        return std::unique_ptr<LogSink>(new RollingFileSink(basePath, maxFileSize, maxFileNum, isOpenNewFile));
+#endif
     }
 };

@@ -1,4 +1,4 @@
-#include <AsynLogger/LogSkin.hpp>
+#include <AsynLogger/LogSink.hpp>
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -21,9 +21,9 @@ void CreateTestLogDir() {
 // 控制台日志测试
 void TestConsole() {
     std::cout << "开始控制台日志测试" << std::endl;
-    ConsoleSkin console;
-    console.Skin("控制台日志测试信息");
-    console.Skin("控制台警告测试信息");
+    ConsoleSink console;
+    console.Sink("控制台日志测试信息");
+    console.Sink("控制台警告测试信息");
     console.Flush();
     std::cout << "控制台日志测试完成" << std::endl;
 }
@@ -33,9 +33,9 @@ void TestSingleFile() {
     std::cout << "开始单文件日志测试" << std::endl;
     std::string filePath = TEST_LOG_DIR + "/single_file_test.log";
     try {
-        FileSkin file(filePath);
-        file.Skin("单文件日志测试信息1");
-        file.Skin("单文件日志测试信息2");
+        FileSink file(filePath);
+        file.Sink("单文件日志测试信息1");
+        file.Sink("单文件日志测试信息2");
         file.Flush();
         std::cout << "单文件日志测试完成" << std::endl;
     } catch (const std::exception& e) {
@@ -48,9 +48,9 @@ void TestRollingFile() {
     std::cout << "开始滚动文件日志测试" << std::endl;
     std::string basePath = TEST_LOG_DIR + "/rolling_file_test.log";
     try {
-        RollingFileSkin roll(basePath, 100, 3, true);
+        RollingFileSink roll(basePath, 100, 3, true);
         for (int i = 0; i < 10; ++i) {
-            roll.Skin("滚动日志测试内容");
+            roll.Sink("滚动日志测试内容");
         }
         roll.Flush();
         std::cout << "滚动文件日志测试完成" << std::endl;

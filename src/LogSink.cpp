@@ -1,7 +1,7 @@
-#include "AsynLogger/LogSkin.hpp"
+#include "AsynLogger/LogSink.hpp"
 
-//LogSkin
-void LogSkin::ThrowOpenError(const std::string& filePath) const {
+//LogSink
+void LogSink::ThrowOpenError(const std::string& filePath) const {
 #if __cplusplus >= 202002L
         throw std::runtime_error(std::format("Failed to open log file: {}", filePath));
 #else
@@ -9,21 +9,21 @@ void LogSkin::ThrowOpenError(const std::string& filePath) const {
 #endif
 }
 
-// class ConsoleSkin
-void ConsoleSkin::Skin(const std::string& formattedLog) {
+// class ConsoleSink
+void ConsoleSink::Sink(const std::string& formattedLog) {
     std::lock_guard<std::mutex> lock(_mutex);
     std::cout << formattedLog << std::endl;
 }
-bool ConsoleSkin::Flush(){
+bool ConsoleSink::Flush(){
     std::lock_guard<std::mutex> lock(_mutex);
     std::cout.flush();
     return true;
 }
 
 
-//class FileSkin
+//class FileSink
 #if __cplusplus >= 201703L
-    FileSkin::FileSkin(std::string_view filePath) : _filePath(filePath)
+    FileSink::FileSink(std::string_view filePath) : _filePath(filePath)
     {
         _ofs.open(_filePath, std::ios::out | std::ios::app);
         if(!_ofs.is_open()){
@@ -31,7 +31,7 @@ bool ConsoleSkin::Flush(){
         }
     }
 #elif __cplusplus >= 201103L
-    FileSkin::FileSkin(const std::string& filePath) : _filePath(filePath)
+    FileSink::FileSink(const std::string& filePath) : _filePath(filePath)
     {
         _ofs.open(_filePath, std::ios::out | std::ios::app);
         if(!_ofs.is_open()){
@@ -40,18 +40,18 @@ bool ConsoleSkin::Flush(){
     }
 #endif
 
-void FileSkin::Skin(const std::string& formattedLog) {
+void FileSink::Sink(const std::string& formattedLog) {
     std::lock_guard<std::mutex> lock(_mutex);
     _ofs << formattedLog << "\n";
 }
 
-bool FileSkin::Flush() {
+bool FileSink::Flush() {
     std::lock_guard<std::mutex> lock(_mutex);
     _ofs.flush();
     return _ofs.good();
 }
 
-FileSkin::~FileSkin() {
+FileSink::~FileSink() {
     if(_ofs.is_open()){
         _ofs.flush();
         _ofs.close();
@@ -59,8 +59,8 @@ FileSkin::~FileSkin() {
 }
 
 
-// class RollingFileSkin
-RollingFileSkin::RollingFileSkin(
+// class RollingFileSink
+RollingFileSink::RollingFileSink(
     const std::string& basePath,
     size_t maxFileSize, 
     size_t maxFileNum,
@@ -72,7 +72,7 @@ RollingFileSkin::RollingFileSkin(
     }
 }
 
-void RollingFileSkin::Skin(const std::string& formattedLog){
+void RollingFileSink::Sink(const std::string& formattedLog){
     std::lock_guard<std::mutex> lock(_mutex);
     // 是否要滚动
     if(_currentSize + formattedLog.size() > _maxFileSize){
@@ -82,7 +82,7 @@ void RollingFileSkin::Skin(const std::string& formattedLog){
     _currentSize += formattedLog.size();
 }
 
-bool RollingFileSkin::Flush(){
+bool RollingFileSink::Flush(){
     std::lock_guard<std::mutex> lock(_mutex);
     if(_ofs.is_open()){
         _ofs.flush();
@@ -92,7 +92,7 @@ bool RollingFileSkin::Flush(){
     return _ofs.good();
 }
 
-RollingFileSkin::~RollingFileSkin(){
+RollingFileSink::~RollingFileSink(){
     if(_ofs.is_open()){
         _ofs.flush();
         _ofs.close();
@@ -100,7 +100,7 @@ RollingFileSkin::~RollingFileSkin(){
 }
 
 #if __cplusplus >= 201703L
-void RollingFileSkin::RollFile(){
+void RollingFileSink::RollFile(){
     if(_ofs.is_open()){
         _ofs.flush();
         _ofs.close();
@@ -131,7 +131,7 @@ void RollingFileSkin::RollFile(){
     _currentSize = 0;
 }
 #else
-void RollingFileSkin::RollFile(){
+void RollingFileSink::RollFile(){
     if(_ofs.is_open()){
         _ofs.flush();
         _ofs.close();

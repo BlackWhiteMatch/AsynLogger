@@ -1,5 +1,5 @@
 #include <iostream>
-#include <AsynLogger/LogSkin.hpp>
+#include <AsynLogger/LogSink.hpp>
 #include <sys/stat.h>
 #include <string>
 
@@ -25,9 +25,9 @@ int main()
 
     // 1. 控制台日志皮肤测试
     std::cout << "1. 控制台日志输出演示" << std::endl;
-    ConsoleSkin console;
-    console.Skin("[INFO] 程序正常运行");
-    console.Skin("[WARN] 控制台日志输出正常");
+    ConsoleSink console;
+    console.Sink("[INFO] 程序正常运行");
+    console.Sink("[WARN] 控制台日志输出正常");
     console.Flush();
     std::cout << std::endl;
 
@@ -36,10 +36,10 @@ int main()
     std::string normalPath = DEMO_LOG_DIR + "/normal_log.log";
     try
     {
-        FileSkin fileSkin(normalPath);
-        fileSkin.Skin("[INFO] 普通文件日志内容1");
-        fileSkin.Skin("[ERROR] 普通文件错误日志内容2");
-        fileSkin.Flush();
+        FileSink fileSink(normalPath);
+        fileSink.Sink("[INFO] 普通文件日志内容1");
+        fileSink.Sink("[ERROR] 普通文件错误日志内容2");
+        fileSink.Flush();
         std::cout << "固定文件日志写入完成" << std::endl;
     }
     catch (const std::exception& e)
@@ -54,16 +54,16 @@ int main()
     try
     {
         // 参数：基础路径 | 单文件最大字节 | 最大保留历史文件 | 启动新建文件
-        RollingFileSkin rollSkin(rollPath, 180, 3, true);
+        RollingFileSink rollSink(rollPath, 180, 3, true);
 
         // 循环写入快速触发滚动轮转
         for (int i = 1; i <= 12; ++i)
         {
             std::string log = "[INFO] 滚动日志测试序号：" + std::to_string(i);
-            rollSkin.Skin(log);
+            rollSink.Sink(log);
         }
 
-        rollSkin.Flush();
+        rollSink.Flush();
         std::cout << "日志已满自动滚动备份完成" << std::endl;
     }
     catch (const std::exception& e)
